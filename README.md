@@ -78,6 +78,10 @@ jlpm run build
 
 # start JupyterLab
 jupyter lab
+
+# Packaging extension
+pip install build
+python -m build -s
 ```
 
 The examples currently target **JupyterLab 4.0 or later**.
