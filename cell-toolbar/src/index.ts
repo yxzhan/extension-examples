@@ -24,6 +24,7 @@ const COMMANDS = {
   HIDE_CELL_CODE: 'hide-cell-code',
   SHOW_CELL_CODE: 'show-cell-code',
   RUN_SELECTED_CODECELL: 'run-selected-codecell',
+  INTERRUPT_KERNEL: 'notebook:interrupt-kernel',
   CLEAR_SELECTED_OUTPUT: 'clear-output-cell',
 };
 
@@ -143,6 +144,7 @@ export class CellFooterWithButton extends ReactWidget implements ICellFooter {
   private codeVisible: boolean;
   private RUN_ICON = 'fa-solid fa-circle-play';
   private CLEAR_ICON = 'fa-solid fa-circle-xmark';
+  private STOP_ICON = 'fa-solid fa-stop';
   private HIDE_ICON = 'fa-solid fa-eye-slash';
   private SHOW_ICON = 'fa-solid fa-eye';
 
@@ -161,16 +163,25 @@ export class CellFooterWithButton extends ReactWidget implements ICellFooter {
     return React.createElement("div", {className: CSS_CLASSES.CELL_FOOTER_DIV }, 
       React.createElement("button",{
           className: CSS_CLASSES.CELL_FOOTER_BUTTON,
-          title: "Click to run this cell", //tooltip text
+          title: "Run this cell", //tooltip text
           onClick: () => {
             this.commands.execute(COMMANDS.RUN_SELECTED_CODECELL);
           },
         },
         React.createElement("i", { className: this.RUN_ICON })
         ),
+        React.createElement("button",{
+          className: CSS_CLASSES.CELL_FOOTER_BUTTON,
+          title: "Interrupt Execution", //tooltip text
+          onClick: () => {
+            this.commands.execute(COMMANDS.INTERRUPT_KERNEL);
+          },
+        },
+        React.createElement("i", { className: this.STOP_ICON })
+        ),
         React.createElement("button", {
           className: `${CSS_CLASSES.CELL_FOOTER_BUTTON} ${CSS_CLASSES.CELL_TOGGLE_BUTTON}`,
-          title: "Click to hide or show code", //tooltip text
+          title: "Hide or show code", //tooltip text
           onClick: () => {
             this.codeVisible = !this.codeVisible;
             if (this.codeVisible) {
