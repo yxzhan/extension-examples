@@ -15,14 +15,11 @@ const CSS_CLASSES = {
   CELL_FOOTER: 'jp-CellFooter',
   CELL_FOOTER_DIV: 'ccb-cellFooterContainer',
   CELL_FOOTER_BUTTON: 'ccb-cellFooterBtn',
-  CELL_TOGGLE_BUTTON: '.ccb-toggleBtn',
   CUSTOM_OUTPUT_AREA: 'custom-output-area', 
 };
 
 // Define command constants
 const COMMANDS = {
-  HIDE_CELL_CODE: 'hide-cell-code',
-  SHOW_CELL_CODE: 'show-cell-code',
   RUN_SELECTED_CODECELL: 'run-selected-codecell',
   INTERRUPT_KERNEL: 'notebook:interrupt-kernel',
   CLEAR_SELECTED_OUTPUT: 'clear-output-cell',
@@ -62,31 +59,6 @@ function activateCommands(app: JupyterFrontEnd, tracker: INotebookTracker): Prom
       );
     }
 
-    // Define a command to hide the code in the current cell
-    commands.addCommand(COMMANDS.HIDE_CELL_CODE, {
-      label:'Hide Cell',
-      execute: args => {
-        const current = getCurrent(args);
-        if (current) {
-          const { content } = current;
-          NotebookActions.hideCode(content);
-        }
-      },
-      isEnabled
-    });
-
-    // Define a command to show the code in the current cell
-    commands.addCommand(COMMANDS.SHOW_CELL_CODE , {
-      label: 'Show Cell',
-      execute: args => {
-        const current = getCurrent(args);
-        if (current) {
-          const { content } = current;
-          NotebookActions.showCode(content);
-        }
-      },
-      isEnabled
-    });
 
     // Define a command to run the code in the current cell
     commands.addCommand(COMMANDS.RUN_SELECTED_CODECELL, {
@@ -141,27 +113,26 @@ export class ContentFactoryWithFooterButton extends NotebookPanel.ContentFactory
  */
 export class CellFooterWithButton extends ReactWidget implements ICellFooter {
   private readonly commands: CommandRegistry;
-  private codeVisible: boolean;
   private RUN_ICON = 'fa-solid fa-circle-play';
-  private CLEAR_ICON = 'fa-solid fa-circle-xmark';
+  private CLEAR_ICON = 'fa-solid fa-ban';
   private STOP_ICON = 'fa-solid fa-stop';
-  private HIDE_ICON = 'fa-solid fa-eye-slash';
-  private SHOW_ICON = 'fa-solid fa-eye';
 
   constructor(commands: CommandRegistry) {
     super();
     this.addClass(CSS_CLASSES.CELL_FOOTER);
     this.commands = commands;
-    this.codeVisible = true;
 
   }
 
   render() {
 
-    const toggleIcon = this.codeVisible ? this.HIDE_ICON : this.SHOW_ICON;
         
     return React.createElement("div", {className: CSS_CLASSES.CELL_FOOTER_DIV }, 
-      React.createElement("button",{
+        React.createElement("div",{
+          className: 'jp-Placeholder-prompt jp-InputPrompt',
+        },
+        ),
+        React.createElement("button",{
           className: CSS_CLASSES.CELL_FOOTER_BUTTON,
           title: "Run this cell", //tooltip text
           onClick: () => {
@@ -180,23 +151,8 @@ export class CellFooterWithButton extends ReactWidget implements ICellFooter {
         React.createElement("i", { className: this.STOP_ICON })
         ),
         React.createElement("button", {
-          className: `${CSS_CLASSES.CELL_FOOTER_BUTTON} ${CSS_CLASSES.CELL_TOGGLE_BUTTON}`,
-          title: "Hide or show code", //tooltip text
-          onClick: () => {
-            this.codeVisible = !this.codeVisible;
-            if (this.codeVisible) {
-              this.commands.execute(COMMANDS.SHOW_CELL_CODE);
-            } else {
-              this.commands.execute(COMMANDS.HIDE_CELL_CODE);
-            }
-            this.update();
-          },
-        },
-        React.createElement("i", { className: toggleIcon })
-        ),
-        React.createElement("button", {
           className: CSS_CLASSES.CELL_FOOTER_BUTTON,
-          title: "Click to clear cell output", //tooltip text
+          title: "Clear cell output", //tooltip text
           onClick: () => {
             this.commands.execute(COMMANDS.CLEAR_SELECTED_OUTPUT);
           },

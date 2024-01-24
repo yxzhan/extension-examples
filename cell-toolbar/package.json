@@ -1,6 +1,6 @@
 {
     "name": "@jupyterlab-examples/cell-toolbar",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "description": "A JupyterLab extension to add cell toolbar buttons.",
     "keywords": [
         "jupyter",
